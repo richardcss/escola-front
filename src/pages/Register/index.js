@@ -58,7 +58,7 @@ export default function Register() {
     <Container>
       <h1>Crie sua conta</h1>
 
-      <Form onSubmit={handleSubmit}>
+      <Form onSubmit={handleSubmit} autoComplete="off">
         <label htmlFor="nome">
           Nome:
           <input
