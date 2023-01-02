@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { get } from 'lodash';
 import { FaUserCircle, FaEdit, FaWindowClose } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 
 import { Container } from '../../styles/GlobalStyles';
 import { AlunoContainer, ProfilePicture } from './styled';
@@ -16,9 +17,14 @@ export default function Alunos() {
   useEffect(() => {
     const getData = async () => {
       setIsLoading(true);
-      const response = await axios.get('/alunos');
-      setAlunos(response.data);
-      setIsLoading(false);
+      try {
+        const response = await axios.get('/alunos');
+        setAlunos(response.data);
+      } catch (err) {
+        toast.error('Erro na requisição!');
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     getData();
