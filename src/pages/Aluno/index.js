@@ -1,14 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
+import React, { useEffect, useState } from 'react';
+import { FaUserCircle, FaEdit } from 'react-icons/fa';
+import { useDispatch } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { isEmail, isInt, isFloat } from 'validator';
+import { isEmail, isFloat, isInt } from 'validator';
 
-import { Container } from '../../styles/GlobalStyles';
-import { Form } from './styled';
 import Loading from '../../components/Loading';
 import * as actions from '../../store/modules/auth/actions';
+import { Container } from '../../styles/GlobalStyles';
+import { Form, ProfilePicture, Title } from './styled';
 
 import axios from '../../services/axios';
 import history from '../../services/history';
@@ -16,7 +18,7 @@ import history from '../../services/history';
 export default function Aluno({ match }) {
   const dispatch = useDispatch();
 
-  const id = get(match, 'params.id', 0);
+  const id = get(match, 'params.id', '');
 
   const [nome, setNome] = useState('');
   const [sobrenome, setSobrenome] = useState('');
@@ -25,6 +27,7 @@ export default function Aluno({ match }) {
   const [peso, setPeso] = useState('');
   const [altura, setAltura] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [foto, setFoto] = useState('');
 
   useEffect(() => {
     if (!id) return;
@@ -34,7 +37,9 @@ export default function Aluno({ match }) {
         setIsLoading(true);
 
         const { data } = await axios.get(`/alunos/${id}`);
-        // const foto = get(data, 'Fotos[0].url', '');
+        const Foto = get(data, 'Fotos[0].url', '');
+
+        setFoto(Foto);
 
         setNome(data.nome);
         setSobrenome(data.sobrenome);
@@ -144,9 +149,15 @@ export default function Aluno({ match }) {
   return (
     <Container>
       <Loading isLoading={isLoading} />
-
-      <h1>{id ? 'Editar aluno' : 'Novo aluno'}</h1>
-
+      <Title>{id ? 'Editar aluno' : 'Novo aluno'}</Title>
+      {id && (
+        <ProfilePicture>
+          {foto ? <img src={foto} alt={nome} /> : <FaUserCircle size={180} />}
+          <Link to={`/foto/${id}`}>
+            <FaEdit size={24} />
+          </Link>
+        </ProfilePicture>
+      )}
       <Form onSubmit={handleSubmit} autoComplete="off">
         <div className="parent">
           <div className="firstChild">
